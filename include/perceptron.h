@@ -13,6 +13,9 @@ typedef struct {
 /* Makes a perceptron given its input dimension and its activation function */
 /* and initialize its weights to random values between -1 and 1	*/
 perceptron_t *perceptron_create(size_t input_size, activation_t a);
+
+perceptron_t *perceptron_clone(const perceptron_t *p);
+
 void perceptron_destroy(perceptron_t *p);
 
 /* Note : All learning algorithms implemened in perceptron.c , */

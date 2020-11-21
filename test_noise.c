@@ -79,10 +79,10 @@ int main(int argc, char **argv){
 	perceptron_t *p = perceptron_create(2, &sign);
 	
 	/* You can switch between pocket and adaline here */
-#if 1
+#if 0
 	perceptron_adaline_learn(p, dataset, 15000);
 #else
-	perceptron_pocket_learn(p, dataset, 15000);
+	perceptron_pocket_learn(p, dataset, 1000);
 #endif
 
 	/* Print the final weights */

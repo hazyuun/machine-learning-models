@@ -22,6 +22,13 @@ perceptron_t *perceptron_create(size_t dim, activation_t a){
 	return p;
 }
 
+perceptron_t *perceptron_clone(const perceptron_t *p){
+	perceptron_t *clone;
+	clone = perceptron_create(p->dim, p->activation);
+	memcpy(clone->w, p->w, (p->dim + 1)*sizeof(float));
+	return clone;
+}
+
 void perceptron_destroy(perceptron_t *p){
 	free(p->w);
 	free(p);	
@@ -74,39 +81,43 @@ size_t perceptron_learn(perceptron_t *p, labeled_dataset_t *data){
 }
 
 /* One iteration of Pocket algorithm */
-static void pocket_weight_update(perceptron_t *p, labeled_dataset_t *data, size_t *t){
-	float LS, LS_before, *w_before;
-	w_before = (float*) malloc((p->dim+1) * sizeof(float));
-	
-	for(size_t i = 0; i < data->len; i++){
-		if(((perceptron_predict(p, data->x + i*p->dim)) != (data->y[i]))){
-			/* Keep a backup of the weights and the LS */
-			LS_before = compute_LS(p, data);		
-			memcpy(w_before, p->w, (p->dim+1)*sizeof(float));
+static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket, labeled_dataset_t *data, size_t *t){
+	float pocket_LS, real_LS;
+
+	for(size_t i = 0; i < data->len; i++){	
+		if(((perceptron_predict(pocket, data->x + i*pocket->dim)) != (data->y[i]))){
 			
 			/* Change the weights as in the PLA */
-			for(size_t j = 0; j < p->dim; j++)
-				p->w[j] += data->y[i] * data->x[i*p->dim + j];
-			p->w[p->dim] += data->y[i];
+			for(size_t j = 0; j < pocket->dim; j++)
+				pocket->w[j] += data->y[i] * data->x[i*pocket->dim + j];
+			pocket->w[p->dim] += data->y[i];
 			
-			/* Compare the new LS with the previous one */
-			/* If it is worse than go back to the previous weights */
-			LS = compute_LS(p, data);
-			if(LS > LS_before)
-				memcpy(p->w, w_before, (p->dim+1)*sizeof(float));
-							
-			
+			/* Calculate losses and keep the best one */
+			pocket_LS = compute_LS(pocket, data);
+			real_LS = compute_LS(p, data);
+			if(real_LS > pocket_LS)
+				memcpy(p->w, pocket->w, (p->dim+1)*sizeof(float));	
 		}
 		++(*t);
 	}
-	free(w_before);
+	
 }
 
 size_t perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data, size_t max_iterations){
 	assert(p->activation == sign);	
 	size_t t = 0;
-	while(compute_LS(p, data) && t < max_iterations)
-		pocket_weight_update(p, data, &t);	
+	
+	perceptron_t *pocket;
+	pocket = perceptron_clone(p);
+	/* Well, this is a waste of memory, since we are cloning the entire perceptron struct */
+	/* all we need to clone is the weights, but since calculate_LS needs a perceptron_t */
+	/* and since I am feeling lazy, I just cloned it */
+	/* TODO: Be less lazy */
+	
+	while(t < max_iterations)
+		pocket_weight_update(p, pocket, data, &t);	
+
+	perceptron_destroy(pocket);
 	return t;
 }
 

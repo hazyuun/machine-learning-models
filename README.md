@@ -2,9 +2,9 @@
 Perceptron learning algorithm, Pocket, and ADALINE, implemented in C
 
 # Plots
-|PLA|POCKET (Not working)|ADALINE|
+|PLA|POCKET|ADALINE|
 |----|----|----|
-|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/adaline.png" />|
+|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE.png" />|
 
 
 # No dependencies
@@ -30,7 +30,6 @@ $ make test
 ```
 Output will be in `bin` directory
 ## Running the test
-* Reminder : you will need gnuplot for that
 
 First of all, after compiling, run the test of your choice, 
 eg.
@@ -38,6 +37,8 @@ eg.
 $ ./bin/perceptron_test_noise
 ```
 Then, run the `plot.sh` bash script
+* Reminder : you will need gnuplot for that
+
 ```bash
 $ ./plot
 ```
