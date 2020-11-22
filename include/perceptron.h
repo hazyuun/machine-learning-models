@@ -3,6 +3,9 @@
 
 #include <activations.h>
 #include <dataset.h>
+#include <metrics.h>
+
+#include <stdarg.h>
 
 typedef struct {
 	size_t dim;
@@ -27,29 +30,27 @@ void perceptron_destroy(perceptron_t *p);
 /*	Do NOT try to implement your own, it won't work, */
 /*	since the assertion uses the one in activations.h */
 
+typedef enum {
+	PLA,
+	POCKET,
+	ADALINE
+} algorithm_t;
+
 /* Trains a perceptron on a dataset using Perceptron Learning algorithm */
-size_t perceptron_learn(perceptron_t *p, labeled_dataset_t *data);
+history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric);
 
 /* Trains a perceptron on a dataset using Pocket algorithm */
-size_t perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data, size_t max_iterations);
+history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric, size_t max_iterations);
 
 /* Trains a perceptron on a dataset using Adaline (Delta rule) algorithm */
-size_t perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, size_t max_iterations);
+history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric, size_t max_iterations);
+
+/* A wrapper for all training algorithsms */
+/* Note : max_iterations is ignored when using PLA */
+history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data, algorithm_t algorithm, metric_t metric, size_t max_iterations); 
 
 /* Predicts an input's class */
 float perceptron_predict(perceptron_t *p, float *x);
-
-/* Mean squared error */
-inline float MSE(perceptron_t *p, labeled_dataset_t *data){
-	float LS = 0;
-	for(size_t i = 0; i < data->len; i++){
-		float y = data->y[i];
-		y -= perceptron_predict(p, data->x + i*p->dim);
-		y = y * y;
-		LS += y;
-	}
-	return LS / (float)(data->len);
-}
 
 #endif
 

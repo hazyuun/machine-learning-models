@@ -4,4 +4,4 @@ w1 = `grep "w1 =" weights.in | cut -d "=" -f2 | awk '{print $1}'`
 w2 = `grep "w2 =" weights.in | cut -d "=" -f2 | awk '{print $1}'`
 m = -w0/w1
 p = -w2/w1
-plot 'data.in' using 1:2:3 with points ls 7 palette, m*x+p
+plot 'data.in' using 1:2:3 t "Dataset points" with points ls 7 palette, m*x+p t "Separator"

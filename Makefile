@@ -1,5 +1,5 @@
 CC = gcc
-CCFLAGS = -O2 -Werror -Wall -Wextra -Wshadow
+CCFLAGS = -g -O2 -Werror -Wall -Wextra -Wshadow
 
 LIB_TARGET = perceptron.a
 TST_TARGET = perceptron_test

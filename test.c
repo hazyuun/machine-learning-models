@@ -37,7 +37,7 @@ int main(int argc, char **argv){
 	
 	/* Make a new perceptron and train it with the dataset */
 	perceptron_t *p = perceptron_create(2, &sign);
-	perceptron_learn(p, dataset);
+	history_t *history = perceptron_train(p, dataset, PLA, LOSS, 1);
 	
 	/* Print the final weights */
 	printf("\n Final weights :");
@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 	
 	/* Test the perceptron */
 	float in[2] = {4, 4};
-	printf("\n%f", (float)perceptron_predict(p, in));
+	printf("\n Predicted (4, 4) label : %f \n", (float)perceptron_predict(p, in));
 
 	/* Generate the output files for plotting */
 	FILE *out;
@@ -55,10 +55,19 @@ int main(int argc, char **argv){
 	for(size_t i = 0; i < 8; i++){
 		fprintf(out, "%.2lf %.2lf %.2lf\n", x[2*i], x[2*i+1], y[i]);
 	}
-	fclose(out);	
+	fclose(out);
+		
 	out = fopen("weights.in", "w");
 	for(size_t i = 0; i < 3; i++){
 		fprintf(out, "w%ld = %.2lf\n", i, p->w[i]);
+	}
+	fclose(out);
+
+	float *history_array = history_as_array(history);
+	size_t len = history_length(history);
+	out = fopen("history.in", "w");
+	for(size_t i = 0; i < len; i++){
+		fprintf(out, "%.2lf %.2lf\n", (float)i, history_array[i]);
 	}
 	fclose(out);
 }

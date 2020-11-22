@@ -5,6 +5,7 @@
 
 #include <perceptron.h>
 #include <activations.h>
+#include <metrics.h>
 #include <mathutils.h>
 
 /* Makes a perceptron given its input dimension and its activation function */
@@ -44,6 +45,16 @@ static float compute_LS(perceptron_t *p, labeled_dataset_t *data){
 	return LS / (float)(data->len);
 }
 
+static float compute_metric(perceptron_t *p, labeled_dataset_t *data, metric_t metric){
+	switch(metric){
+	case LOSS:
+		return compute_LS(p, data);
+	case ACCURACY:
+		return 1 - compute_LS(p, data);
+	default: return -1;
+	}
+}
+
 /* Note : All learning algorithms implemented here, */
 /*	only work with sign as activation 	*/
 /* TODO : extend them to work on other activations */
@@ -66,18 +77,26 @@ static void PLA_weight_update(perceptron_t *p, labeled_dataset_t *data, size_t *
 	}
 }
 
-
+#include <stdio.h>
 /* Trains a perceptron on a dataset using Perceptron Learning algorithm */
-size_t perceptron_learn(perceptron_t *p, labeled_dataset_t *data){
+history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric){
 	assert(p->activation == sign);
 	size_t t = 0;
+	history_t *history;
+	
 	float LS;
 	LS = compute_LS(p, data);
+	
+	float history_entry = compute_metric(p, data, metric);
+	history = history_create(history_entry);
+	
 	while(LS != 0){
 		PLA_weight_update(p, data, &t);
 		LS = compute_LS(p, data);
+		history_entry = compute_metric(p, data, metric);
+		history_append(history, history_entry);
 	}
-	return t;
+	return history;
 }
 
 /* One iteration of Pocket algorithm */
@@ -103,22 +122,28 @@ static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket, labeled_
 	
 }
 
-size_t perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data, size_t max_iterations){
+history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric, size_t max_iterations){
 	assert(p->activation == sign);	
 	size_t t = 0;
+	
+	history_t *history;
+	float history_entry = compute_metric(p, data, metric);
+	history = history_create(history_entry);
 	
 	perceptron_t *pocket;
 	pocket = perceptron_clone(p);
 	/* Well, this is a waste of memory, since we are cloning the entire perceptron struct */
-	/* all we need to clone is the weights, but since calculate_LS needs a perceptron_t */
+	/* all we need to clone is the weights, but since compute_LS needs a perceptron_t */
 	/* and since I am feeling lazy, I just cloned it */
 	/* TODO: Be less lazy */
 	
-	while(t < max_iterations)
+	while(t < max_iterations){
 		pocket_weight_update(p, pocket, data, &t);	
-
+		history_entry = compute_metric(p, data, metric);
+		history_append(history, history_entry);
+	}
 	perceptron_destroy(pocket);
-	return t;
+	return history;
 }
 
 /* One iteration of Adaline (Delta rule) algorithm */
@@ -136,14 +161,43 @@ static void adaline_weight_update(perceptron_t *p, labeled_dataset_t *data, size
 }
 /* I noticed this is pretty much the same code in pocket function */
 /* TODO: DRY! Do not repeat yourself */
-size_t perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, size_t max_iterations){
+history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric, size_t max_iterations){
 	assert(p->activation == sign);
-	size_t t = 0;	
-	while(t < max_iterations)
-		adaline_weight_update(p, data, &t);
+	size_t t = 0;
 
-	return t;
+	history_t *history;
+	float history_entry = compute_metric(p, data, metric);
+	history = history_create(history_entry);
+		
+	while(t < max_iterations){
+		adaline_weight_update(p, data, &t);
+		history_entry = compute_metric(p, data, metric);
+		history_append(history, history_entry);
+	}
+	return history;
 }
+
+/* A wrapper for all training algorithsms */
+history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data, algorithm_t algorithm, metric_t metric, size_t max_iterations){
+	history_t *history = NULL;
+	
+	switch(algorithm){
+	case PLA:
+		history = perceptron_PLA_learn(p, data, metric);
+		break;
+	case POCKET:
+		history = perceptron_pocket_learn(p, data, metric, max_iterations);
+		break;
+	case ADALINE:
+		history = perceptron_adaline_learn(p, data, metric, max_iterations);
+		break;
+	default:
+		break;
+	}
+	
+	return history;
+}
+
 
 /* Predicts an input's class */
 float perceptron_predict(perceptron_t *p, float *x){

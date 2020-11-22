@@ -1,0 +1,1 @@
+plot 'history.in' using 1:2 t "metric" with lines

@@ -2,10 +2,14 @@
 Perceptron learning algorithm, Pocket, and ADALINE, implemented in C
 
 # Plots
+* Data and separators
 |PLA|POCKET|ADALINE|
 |----|----|----|
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE.png" />|
-
+* Loss evolution
+|PLA|POCKET|ADALINE|
+|----|----|----|
+|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE_loss.png" />|
 
 # No dependencies
 No dependencies unless you wanna see the plot, then you will need `gnuplot`
@@ -40,7 +44,7 @@ Then, run the `plot.sh` bash script
 * Reminder : you will need gnuplot for that
 
 ```bash
-$ ./plot
+$ ./plot.sh
 ```
 
 
