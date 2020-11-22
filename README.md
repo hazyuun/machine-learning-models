@@ -1,5 +1,8 @@
 # perceptron_algorithms
+
 Perceptron learning algorithm, Pocket, and ADALINE, implemented in C
+<br />
+![C/C++ CI](https://github.com/A-Rain-Lover/perceptron_algorithms/workflows/C/C++%20CI/badge.svg?branch=master)
 
 # Plots
 
