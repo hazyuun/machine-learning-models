@@ -36,10 +36,12 @@ int main(int argc, char **argv){
     history_t *history = perceptron_lsquares_learn(p, data, MSE_METRIC, 0.01, 500);
     
     /* Some tests */
+#if 0
     float input = -10.0f;
     for(; input < 10.0f; input++)
         printf("\n %.1f : %.3f", input, perceptron_predict(p, &input));
-    
+#endif
+
     /* Generate the output files for plotting */
 	FILE *out;
     
