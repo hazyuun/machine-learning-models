@@ -24,7 +24,7 @@ lib: dirs $(OBJ)
 
 obj/%.o: src/%.c
 	@echo [CC] $@
-	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude
+	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude 
 
 CSVSRC = rainy-csv/src/csv.c
 TESTINC = -Iinclude -Irainy-csv/src
@@ -33,9 +33,9 @@ TESTINC = -Iinclude -Irainy-csv/src
 test:
 	@mkdir -p bin
 	@echo [*] Compiling the test ..
-	@$(CC) ./test.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET) $(CCFLAGS) $(TESTINC)
-	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_noise $(CCFLAGS) $(TESTINC)
-	@$(CC) ./test_lin_reg.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_lin_reg $(CCFLAGS) $(TESTINC)
+	@$(CC) ./test.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET) $(CCFLAGS) $(TESTINC) -lm
+	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_noise $(CCFLAGS) $(TESTINC) -lm
+	@$(CC) ./test_lin_reg.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_lin_reg $(CCFLAGS) $(TESTINC) -lm
 	
 	
 
