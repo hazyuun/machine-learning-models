@@ -229,15 +229,15 @@ history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data, metric_t 
     assert(metric == MSE_METRIC);
     
     history_t *history;
-	float history_entry = compute_MSE(p, data);
-	history = history_create(history_entry);
+    float history_entry = compute_MSE(p, data);
+    history = history_create(history_entry);
     (void) metric;
     size_t t = 0;
-	while(t < max_iterations){
-		lsquares_weight_update(p, data, learning_rate, &t);
+    while(t < max_iterations){
+        lsquares_weight_update(p, data, learning_rate, &t);
         history_entry = compute_MSE(p, data);
         history_append(history, history_entry);
-	}
+    }
     
     return history;
 }
