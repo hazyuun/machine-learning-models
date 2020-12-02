@@ -1,46 +1,28 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <perceptron.h>
+#include <csv.h>
 
 int main(int argc, char **argv){
     (void) argc;
 	(void) argv;
     
-    /* Use a .csv file and clean this mess */
-#if 1
-    float x[] = {
-        0.0f, 0.0f,
-        1.0f, 1.0f,
-        1.1f, 1.0f,
-        1.2f, 1.1f,
-        
-        1.3f, 1.2f,
-        1.3f, 1.3f,
-        1.5f, 1.56f,
-        2.0f, 2.1f,
-        
-        2.1f, 2.1f,
-        2.1f, 2.15f,
-        2.2f, 2.2f,
-        2.3f, 2.35f
-    };
-#else
-    float x[] = {
-        0.0f, 0.0f,
-        1.0f, 1.0f,
-        1.1f, 1.1f,
-        1.2f, 1.2f,
-        
-        1.3f, 1.3f,
-        1.4f, 1.4f,
-        1.5f, 1.5f,
-        2.0f, 2.0f,
-        
-        2.1f, 2.1f,
-        2.2f, 2.2f,
-        2.3f, 2.3f,
-        2.35f, 2.35f
-    };
-#endif
+    csv_t csv = csv_load("./test-data/regression.csv");
+    
+    /* -1 because the first row is only for the headers */
+    size_t rows = csv_count_rows(csv) - 1;
+    size_t cols = csv_count_cols(csv);
+    const size_t n = rows * cols;
+    
+    float x[n];
+    
+	for(size_t i = 1; i < rows; i++){
+        for(size_t j = 0; j < cols; j++){
+           x[cols * i + j] = atof(csv_get_value(csv, i, j));
+        }
+    }
+	
+	csv_destroy(csv);
     
     dataset_t *data = dataset_create(2, 12);
 	data->x = x;

@@ -26,13 +26,16 @@ obj/%.o: src/%.c
 	@echo [CC] $@
 	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude
 
+CSVSRC = rainy-csv/src/csv.c
+TESTINC = -Iinclude -Irainy-csv/src
+
 .phony: test
 test:
 	@mkdir -p bin
 	@echo [*] Compiling the test ..
-	@$(CC) ./test.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET) $(CCFLAGS) -Iinclude
-	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET)_noise $(CCFLAGS) -Iinclude
-	@$(CC) ./test_lin_reg.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET)_lin_reg $(CCFLAGS) -Iinclude
+	@$(CC) ./test.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET) $(CCFLAGS) $(TESTINC)
+	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_noise $(CCFLAGS) $(TESTINC)
+	@$(CC) ./test_lin_reg.c ./lib/$(LIB_TARGET) $(CSVSRC) -o bin/$(TST_TARGET)_lin_reg $(CCFLAGS) $(TESTINC)
 	
 	
 

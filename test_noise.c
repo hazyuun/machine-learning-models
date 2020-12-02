@@ -1,76 +1,33 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <perceptron.h>
+#include <csv.h>
 
 int main(int argc, char **argv){
 	(void) argc;
 	(void) argv;
 	
-    /* Use a .csv file and clean this mess */
-	/* Points' coordinates */
-	float x[] = {
-		0.0f, 2.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f,
-		1.0f, 2.0f,
-		1.0f, 3.0f,
-		1.0f, 3.5f,
-		2.0f, 1.0f,
-		2.0f, 2.0f,
-		2.0f, 3.0f,
-		2.0f, 3.5f,
-		3.0f, 0.0f,
-		3.0f, 2.0f,
-		2.7f, 3.3f,
-		4.0f, 1.0f,
-		
-		1.0f, 4.0f,
-		2.0f, 4.0f,
-		2.0f, 5.0f,
-		2.5f, 3.0f,
-		2.5f, 4.0f,
-		3.0f, 3.0f,
-		3.0f, 4.5f,
-		3.0f, 6.0f,
-		4.0f, 2.5f,
-		4.0f, 3.5f,
-		4.0f, 5.0f,
-		5.0f, 2.0f,
-		5.0f, 3.0f,
-		5.0f, 4.0f,
-	};
-	/* Points' classes */
-	float y[] = {
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f
-	};
-	
+    csv_t csv = csv_load("./test-data/noisy.csv");
+    
+    size_t rows = csv_count_rows(csv);
+    size_t cols = csv_count_cols(csv);
+    
+    float x[2*rows];    /* 2 inputs */
+    float y[1*rows];    /* 1 label */
+
+	for(size_t i = 1; i < rows; i++){
+        for(size_t j = 0; j < cols - 1; j++){
+           x[2 * (i-1) + j] = atof(csv_get_value(csv, i, j));
+        }
+    }
+        
+	for(size_t i = 1; i < rows; i++){
+       y[i-1] = atof(csv_get_value(csv, i, cols - 1));
+    }
+    
+	csv_destroy(csv);
+    
+    
 	/* Make a new dataset with the previous arrays */
 	labeled_dataset_t *dataset = labeled_dataset_create(2, 28);
 	dataset->x = x;
