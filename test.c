@@ -13,8 +13,8 @@ int main(int argc, char **argv){
     size_t rows = csv_count_rows(csv);
     size_t cols = csv_count_cols(csv);
     
-    float x[2*rows];    /* 2 inputs */
-    float y[1*rows];    /* 1 label */
+    float x[2*(rows-1)];    /* 2 inputs */
+    float y[1*(rows-1)];    /* 1 label */
 
 	for(size_t i = 1; i < rows; i++){
         for(size_t j = 0; j < cols - 1; j++){
@@ -49,18 +49,22 @@ int main(int argc, char **argv){
 
 	/* Generate the output files for plotting */
 	FILE *out;
+    
+    /* Points */
 	out = fopen("data.in", "w");
-	for(size_t i = 0; i < 8; i++){
+	for(size_t i = 0; i < rows-1; i++){
 		fprintf(out, "%.2lf %.2lf %.2lf\n", x[2*i], x[2*i+1], y[i]);
 	}
 	fclose(out);
-		
+
+    /* Weights */
 	out = fopen("weights.in", "w");
 	for(size_t i = 0; i < 3; i++){
 		fprintf(out, "w%ld = %.2lf\n", i, p->w[i]);
 	}
 	fclose(out);
 
+    /* History */
 	float *history_array = history_as_array(history);
 	size_t len = history_length(history);
 	out = fopen("history.in", "w");
