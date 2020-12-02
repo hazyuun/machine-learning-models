@@ -8,11 +8,11 @@ SRC = $(shell find ./src -name "*.c")
 OBJ = $(patsubst ./src/%.c, ./obj/%.o, $(SRC))
 
 .phony: all
-all: lib test
+all: lib tests
 
 .phony: dirs
 dirs:
-	@mkdir -p obj lib
+	@mkdir -p obj lib bin
 	
 .phony: lib
 lib: dirs $(OBJ)
@@ -24,17 +24,20 @@ lib: dirs $(OBJ)
 
 obj/%.o: src/%.c
 	@echo [CC] $@
-	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude
+	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude 
 
-.phony: test
-test:
-	@mkdir -p bin
-	@echo [*] Compiling the test ..
-	@$(CC) ./test.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET) $(CCFLAGS) -Iinclude
-	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET)_noise $(CCFLAGS) -Iinclude
-	
-	
 
+TESTSRC = $(shell find ./tests -name "*.c")
+TESTEXE = $(patsubst ./tests/%.c, ./bin/%, $(TESTSRC))
+CSVSRC = rainy-csv/src/csv.c
+TESTINC = -Iinclude -Irainy-csv/src
+
+.phony: tests
+tests: dirs $(TESTEXE)
+	
+bin/%: tests/%.c
+	@echo [CC] $@
+	@$(CC) $< ./lib/$(LIB_TARGET) $(CSVSRC) -o $@ $(CCFLAGS) $(TESTINC) -lm
 	
 .phony: clean
 clean:

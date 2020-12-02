@@ -2,6 +2,7 @@
 #include <time.h>
 #include <assert.h>
 #include <string.h>
+#include <math.h>
 
 #include <perceptron.h>
 #include <activations.h>
@@ -35,27 +36,7 @@ void perceptron_destroy(perceptron_t *p){
 	free(p);	
 }
 
-/* Computes the percentage of the incorrect predictions */
-static float compute_LS(perceptron_t *p, labeled_dataset_t *data){
-	float LS = 0;
-	for(size_t i = 0; i < data->len; i++){
-		if(perceptron_predict(p, data->x + i*p->dim) != data->y[i])
-			LS += 1;
-	}
-	return LS / (float)(data->len);
-}
-
-static float compute_metric(perceptron_t *p, labeled_dataset_t *data, metric_t metric){
-	switch(metric){
-	case LOSS:
-		return compute_LS(p, data);
-	case ACCURACY:
-		return 1 - compute_LS(p, data);
-	default: return -1;
-	}
-}
-
-/* Note : All learning algorithms implemented here, */
+/* Note : All classification learning algorithms implemented here, */
 /*	only work with sign as activation 	*/
 /* TODO : extend them to work on other activations */
 
@@ -64,6 +45,10 @@ static float compute_metric(perceptron_t *p, labeled_dataset_t *data, metric_t m
 /*	Do NOT try to implement your own, it won't work, */
 /*	since the assertion uses the one in activations.h */
 
+
+/******************/
+/* CLASSIFICATION */
+/******************/
 
 /* One iteration of the Perceptron Learning algorithm */
 static void PLA_weight_update(perceptron_t *p, labeled_dataset_t *data, size_t *t){
@@ -77,7 +62,7 @@ static void PLA_weight_update(perceptron_t *p, labeled_dataset_t *data, size_t *
 	}
 }
 
-#include <stdio.h>
+
 /* Trains a perceptron on a dataset using Perceptron Learning algorithm */
 history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric){
 	assert(p->activation == sign);
@@ -159,6 +144,7 @@ static void adaline_weight_update(perceptron_t *p, labeled_dataset_t *data, size
 	}
 	++(*t);
 }
+
 /* I noticed this is pretty much the same code in pocket function */
 /* TODO: DRY! Do not repeat yourself */
 history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric, size_t max_iterations){
@@ -182,21 +168,80 @@ history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data, algorithm_
 	history_t *history = NULL;
 	
 	switch(algorithm){
-	case PLA:
+	case PLA_ALGO:
 		history = perceptron_PLA_learn(p, data, metric);
 		break;
-	case POCKET:
+	case POCKET_ALGO:
 		history = perceptron_pocket_learn(p, data, metric, max_iterations);
 		break;
-	case ADALINE:
+	case ADALINE_ALGO:
 		history = perceptron_adaline_learn(p, data, metric, max_iterations);
 		break;
-	default:
+	default: /* TODO: Print something ?*/
 		break;
 	}
 	
 	return history;
 }
+
+/**************/
+/* REGRESSION */
+/**************/
+
+/* Returns the jth component of the gradient vector of the MSE */
+static float compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index){
+    float grad_mse = 0.0f;
+    
+    if(index != p->dim){
+        for(size_t i = 0; i < data->len; i++){
+            grad_mse += data->x[data->dim*i + index] 
+                        * (perceptron_predict(p, data->x + data->dim*i) - data->x[data->dim*i + p->dim]);
+        }
+    }else{
+        for(size_t i = 0; i < data->len; i++)
+            grad_mse += (perceptron_predict(p, data->x + data->dim*i) - data->x[data->dim*i + p->dim]);
+    }
+    
+    grad_mse *= 2.0f;
+    grad_mse /= data->len;
+    
+    return grad_mse;
+}
+
+/* One iteration of least squares method using GD */
+static void lsquares_weight_update(perceptron_t *p, dataset_t *data, float learning_rate, size_t *t){
+    /* Calculate the gradient */
+    float grad[p->dim+1];
+    for(size_t j = 0; j < p->dim+1; j++)
+        grad[j] = compute_grad_MSE(p, data, j);
+    
+    /* Perform gradient decent */
+    for(size_t j = 0; j < p->dim+1; j++)
+        p->w[j] -= learning_rate * grad[j];
+        
+    ++(*t);
+}
+
+/* WARNING : Only works with MSE */
+/* metric parameter is there only for flexibility */
+/* just in case I want to implement other metrics */
+history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data, metric_t metric, float learning_rate, size_t max_iterations){
+    assert(metric == MSE_METRIC);
+    
+    history_t *history;
+	float history_entry = compute_MSE(p, data);
+	history = history_create(history_entry);
+    (void) metric;
+    size_t t = 0;
+	while(t < max_iterations){
+		lsquares_weight_update(p, data, learning_rate, &t);
+        history_entry = compute_MSE(p, data);
+        history_append(history, history_entry);
+	}
+    
+    return history;
+}
+
 
 
 /* Predicts an input's class */

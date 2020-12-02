@@ -7,5 +7,6 @@ typedef float (*activation_t)(float);
 
 float sign(float x);
 float sigmoid(float x);
+float identity(float x);
 
 #endif
