@@ -11,10 +11,9 @@ Some perceptron classification and regression algorithms, implemented in C
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE.png" />|
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE_loss.png" />|
 ## Regression
-|Linear regression ( Least squares with gradient decent )|
-|----|
-|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg.png" />|
-|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg_loss.png" />|
+|Linear regression ( Least squares with gradient decent )| Evolution of loss |
+|----|----|
+|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg_loss.png" />|
 
 # Getting started
 ## Dependencies (Optionnal)
