@@ -6,12 +6,13 @@
 #include <metrics.h>
 
 #include <stdarg.h>
-
-typedef struct {
+typedef struct perceptron perceptron_t;
+struct perceptron {
 	size_t dim;
 	float *w;
 	activation_t activation;
-} perceptron_t;
+};
+
 
 /* Makes a perceptron given its input dimension and its activation function */
 /* and initialize its weights to random values between -1 and 1	*/
@@ -21,7 +22,7 @@ perceptron_t *perceptron_clone(const perceptron_t *p);
 
 void perceptron_destroy(perceptron_t *p);
 
-/* Note : All learning algorithms implemened in perceptron.c , */
+/* Note : All classification learning algorithms implemened in perceptron.c , */
 /*	only work with sign as activation 	*/
 /* TODO : extend them to work on other activations */
 
@@ -31,10 +32,19 @@ void perceptron_destroy(perceptron_t *p);
 /*	since the assertion uses the one in activations.h */
 
 typedef enum {
-	PLA,
-	POCKET,
-	ADALINE
+    /* CLASSIFICATION */
+    PLA_ALGO,
+	POCKET_ALGO,
+	ADALINE_ALGO,
+    
+    /* REGRESSION */    
+    LEAST_SQUARES_GD_ALGO
+        
 } algorithm_t;
+
+/******************/
+/* Classification */
+/******************/
 
 /* Trains a perceptron on a dataset using Perceptron Learning algorithm */
 history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data, metric_t metric);
@@ -48,6 +58,14 @@ history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data, me
 /* A wrapper for all training algorithsms */
 /* Note : max_iterations is ignored when using PLA */
 history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data, algorithm_t algorithm, metric_t metric, size_t max_iterations); 
+
+/******************/
+
+/* Regression */
+
+/* Trains a perceptron for linear regression with least squares method */
+history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data, metric_t metric, float learning_rate, size_t max_iterations);
+
 
 /* Predicts an input's class */
 float perceptron_predict(perceptron_t *p, float *x);

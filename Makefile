@@ -32,6 +32,7 @@ test:
 	@echo [*] Compiling the test ..
 	@$(CC) ./test.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET) $(CCFLAGS) -Iinclude
 	@$(CC) ./test_noise.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET)_noise $(CCFLAGS) -Iinclude
+	@$(CC) ./test_lin_reg.c ./lib/$(LIB_TARGET) -o bin/$(TST_TARGET)_lin_reg $(CCFLAGS) -Iinclude
 	
 	
 

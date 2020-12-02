@@ -5,6 +5,7 @@ int main(int argc, char **argv){
 	(void) argc;
 	(void) argv;
 	
+    /* Use a .csv file and clean this mess */
 	/* Points' coordinates */
 	float x[] = {
 		0.0f, 2.0f,
@@ -82,9 +83,9 @@ int main(int argc, char **argv){
 	
 	/* You can switch between pocket and adaline here */
 #if 0
-	history = perceptron_train(p, dataset, POCKET, LOSS, 800);
+	history = perceptron_train(p, dataset, POCKET_ALGO, LOSS_METRIC, 800);
 #else
-	history = perceptron_train(p, dataset, ADALINE, LOSS, 1000);
+	history = perceptron_train(p, dataset, ADALINE_ALGO, LOSS_METRIC, 1000);
 #endif
 
 	

@@ -5,6 +5,7 @@ int main(int argc, char **argv){
 	(void) argc;
 	(void) argv;
 	
+    /* Use a .csv file and clean this mess */
 	/* Points' coordinates */
 	float x[] = {
 		1.0f, 1.0f,
@@ -37,7 +38,7 @@ int main(int argc, char **argv){
 	
 	/* Make a new perceptron and train it with the dataset */
 	perceptron_t *p = perceptron_create(2, &sign);
-	history_t *history = perceptron_train(p, dataset, PLA, LOSS, 1);
+	history_t *history = perceptron_train(p, dataset, PLA_ALGO, LOSS_METRIC, 1);
 	
 	/* Print the final weights */
 	printf("\n Final weights :");
