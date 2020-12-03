@@ -4,24 +4,17 @@
 #include <stddef.h>
 #include <dataset.h>
 
-
 /* This linked list keeps the history of the values of a metric */
 
 typedef struct history_entry history_t;
 typedef struct perceptron perceptron_t;
 
 struct history_entry {
-	float value;
-	struct history_entry *next;
+  float value;
+  struct history_entry *next;
 };
 
-
-typedef enum {
-	LOSS_METRIC,
-	ACCURACY_METRIC,
-    MSE_METRIC
-} metric_t;
-
+typedef enum { LOSS_METRIC, ACCURACY_METRIC, MSE_METRIC } metric_t;
 
 /* Self explanatory stuff ahead */
 
@@ -35,9 +28,7 @@ size_t history_length(history_t *history);
 
 float *history_as_array(history_t *history);
 
-
 /* Metrics */
-
 
 /* Computes the percentage of the incorrect predictions */
 float compute_LS(perceptron_t *p, labeled_dataset_t *data);

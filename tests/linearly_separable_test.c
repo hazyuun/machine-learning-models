@@ -3,74 +3,73 @@
 #include <perceptron.h>
 #include <csv.h>
 
-int main(int argc, char **argv){
-	(void) argc;
-	(void) argv;
+int main(int argc, char **argv) {
+  (void)argc;
+  (void)argv;
 
-    csv_t csv = csv_load("./test-data/linearly-separable.csv");
-    //csv_print(csv);
-    
-    size_t rows = csv_count_rows(csv);
-    size_t cols = csv_count_cols(csv);
-    
-    float x[2*(rows-1)];    /* 2 inputs */
-    float y[1*(rows-1)];    /* 1 label */
+  csv_t csv = csv_load("./test-data/linearly-separable.csv");
+  // csv_print(csv);
 
-	for(size_t i = 1; i < rows; i++){
-        for(size_t j = 0; j < cols - 1; j++){
-           x[2 * (i-1) + j] = atof(csv_get_value(csv, i, j));
-        }
+  size_t rows = csv_count_rows(csv);
+  size_t cols = csv_count_cols(csv);
+
+  float x[2 * (rows - 1)]; /* 2 inputs */
+  float y[1 * (rows - 1)]; /* 1 label */
+
+  for (size_t i = 1; i < rows; i++) {
+    for (size_t j = 0; j < cols - 1; j++) {
+      x[2 * (i - 1) + j] = atof(csv_get_value(csv, i, j));
     }
-        
-	for(size_t i = 1; i < rows; i++){
-       y[i-1] = atof(csv_get_value(csv, i, cols - 1));
-    }
-    
-	csv_destroy(csv);
-    
-	/* Make a new dataset with the previous arrays */
-	labeled_dataset_t *dataset = labeled_dataset_create(2, 8);
-	dataset->x = x;
-	dataset->y = y;
-	
-	/* Make a new perceptron and train it with the dataset */
-	perceptron_t *p = perceptron_create(2, &sign);
-	history_t *history = perceptron_train(p, dataset, PLA_ALGO, LOSS_METRIC, 1);
-	
-	/* Print the final weights */
-	printf("\n Final weights :");
-	for(size_t j = 0; j < p->dim+1; j++)
-		printf("\t%.1f",  (float)(p->w[j]));
-	printf("\n");
-	
-	/* Test the perceptron */
-	float in[2] = {4, 4};
-	printf("\n Predicted (4, 4) label : %f \n", (float)perceptron_predict(p, in));
+  }
 
-	/* Generate the output files for plotting */
-	FILE *out;
-    
-    /* Points */
-	out = fopen("data.in", "w");
-	for(size_t i = 0; i < rows-1; i++){
-		fprintf(out, "%.2lf %.2lf %.2lf\n", x[2*i], x[2*i+1], y[i]);
-	}
-	fclose(out);
+  for (size_t i = 1; i < rows; i++) {
+    y[i - 1] = atof(csv_get_value(csv, i, cols - 1));
+  }
 
-    /* Weights */
-	out = fopen("weights.in", "w");
-	for(size_t i = 0; i < 3; i++){
-		fprintf(out, "w%ld = %.2lf\n", i, p->w[i]);
-	}
-	fclose(out);
+  csv_destroy(csv);
 
-    /* History */
-	float *history_array = history_as_array(history);
-	size_t len = history_length(history);
-	out = fopen("history.in", "w");
-	for(size_t i = 0; i < len; i++){
-		fprintf(out, "%.2lf %.2lf\n", (float)i, history_array[i]);
-	}
-	fclose(out);
+  /* Make a new dataset with the previous arrays */
+  labeled_dataset_t *dataset = labeled_dataset_create(2, 8);
+  dataset->x = x;
+  dataset->y = y;
+
+  /* Make a new perceptron and train it with the dataset */
+  perceptron_t *p = perceptron_create(2, &sign);
+  history_t *history = perceptron_train(p, dataset, PLA_ALGO, LOSS_METRIC, 1);
+
+  /* Print the final weights */
+  printf("\n Final weights :");
+  for (size_t j = 0; j < p->dim + 1; j++)
+    printf("\t%.1f", (float)(p->w[j]));
+  printf("\n");
+
+  /* Test the perceptron */
+  float in[2] = {4, 4};
+  printf("\n Predicted (4, 4) label : %f \n", (float)perceptron_predict(p, in));
+
+  /* Generate the output files for plotting */
+  FILE *out;
+
+  /* Points */
+  out = fopen("data.in", "w");
+  for (size_t i = 0; i < rows - 1; i++) {
+    fprintf(out, "%.2lf %.2lf %.2lf\n", x[2 * i], x[2 * i + 1], y[i]);
+  }
+  fclose(out);
+
+  /* Weights */
+  out = fopen("weights.in", "w");
+  for (size_t i = 0; i < 3; i++) {
+    fprintf(out, "w%ld = %.2lf\n", i, p->w[i]);
+  }
+  fclose(out);
+
+  /* History */
+  float *history_array = history_as_array(history);
+  size_t len = history_length(history);
+  out = fopen("history.in", "w");
+  for (size_t i = 0; i < len; i++) {
+    fprintf(out, "%.2lf %.2lf\n", (float)i, history_array[i]);
+  }
+  fclose(out);
 }
-
