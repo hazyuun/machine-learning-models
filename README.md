@@ -19,15 +19,17 @@ Some ML algorithms for classification and regression implemented from scratch in
 # Getting started
 ## Dependencies (Optionnal)
 * `gnuplot` (optionnal) This is just for the `plot.sh` script, you can compile and use the library without this
-* `rainy-csv` (optionnal) This is my library, I used it just for the tests, so you can skip it too, it is used as git submodule so it will be automatically downloaded when you clone using the command below
+* `rainy-csv` (optionnal) This is my library, I used it just for the tests, so you can skip it too, it is used as git submodule so it will be automatically downloaded when you clone with `--recurse-submodules`
 ## Cloning
-If you wanna run the tests, please clone with
+If you are planning to run the tests, please clone with
 ```bash
 $ git clone --recurse-submodules https://github.com/A-Rain-Lover/perceptron_algorithms
 ```
-to automatically get `rainy-csv` used in the tests.
-If you won't run the tests, then clone as usual.
-
+to automatically get `rainy-csv`.
+If you won't run the tests, then clone as usual :
+```bash
+$ git clone https://github.com/A-Rain-Lover/perceptron_algorithms
+```
 # Compiling and using
 ## Compiling
 Just use the Makefile
