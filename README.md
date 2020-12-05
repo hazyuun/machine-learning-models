@@ -25,7 +25,7 @@ If you are planning to run the tests, please clone with
 ```bash
 $ git clone --recurse-submodules https://github.com/A-Rain-Lover/perceptron_algorithms
 ```
-to automatically get `rainy-csv`.
+to automatically get `rainy-csv`. <br />
 If you won't run the tests, then clone as usual :
 ```bash
 $ git clone https://github.com/A-Rain-Lover/perceptron_algorithms
