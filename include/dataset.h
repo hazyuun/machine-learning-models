@@ -12,8 +12,8 @@ typedef struct labeled_dataset labeled_dataset_t;
 struct labeled_dataset {
   size_t len;
   size_t dim;
-  float *y;
-  float *x;
+  double *y;
+  double *x;
 };
 
 /* Makes a new empty labeled dataset given its length and the input dimension */
@@ -24,7 +24,7 @@ void labeled_dataset_destroy(labeled_dataset_t *dataset);
 struct dataset {
   size_t len;
   size_t dim;
-  float *x;
+  double *x;
 };
 
 /* Makes a new empty dataset given its length and the input dimension */

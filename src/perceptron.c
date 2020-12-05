@@ -1,24 +1,24 @@
-#include <stdlib.h>
-#include <time.h>
 #include <assert.h>
-#include <string.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
-#include <perceptron.h>
 #include <activations.h>
-#include <metrics.h>
 #include <mathutils.h>
+#include <metrics.h>
+#include <perceptron.h>
 
 /* Makes a perceptron given its input dimension and its activation function */
 /* and initialize its weights to random values between -1 and 1 */
 perceptron_t *perceptron_create(size_t dim, activation_t a) {
   perceptron_t *p = (perceptron_t *)malloc(sizeof(perceptron_t));
   p->dim = dim;
-  p->w = (float *)malloc((p->dim + 1) * sizeof(float)); /* +1 for the bias */
+  p->w = (double *)malloc((p->dim + 1) * sizeof(double)); /* +1 for the bias */
 
   srand(time(NULL));
   for (size_t i = 0; i < p->dim + 1; i++)
-    p->w[i] = 2.0f * ((rand() / (float)RAND_MAX) - 1.0f);
+    p->w[i] = 2.0f * ((rand() / (double)RAND_MAX) - 1.0f);
 
   p->activation = a;
   return p;
@@ -27,7 +27,7 @@ perceptron_t *perceptron_create(size_t dim, activation_t a) {
 perceptron_t *perceptron_clone(const perceptron_t *p) {
   perceptron_t *clone;
   clone = perceptron_create(p->dim, p->activation);
-  memcpy(clone->w, p->w, (p->dim + 1) * sizeof(float));
+  memcpy(clone->w, p->w, (p->dim + 1) * sizeof(double));
   return clone;
 }
 
@@ -68,10 +68,10 @@ history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data,
   size_t t = 0;
   history_t *history;
 
-  float LS;
+  double LS;
   LS = compute_LS(p, data);
 
-  float history_entry = compute_metric(p, data, metric);
+  double history_entry = compute_metric(p, data, metric);
   history = history_create(history_entry);
 
   while (LS != 0) {
@@ -86,7 +86,7 @@ history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data,
 /* One iteration of Pocket algorithm */
 static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket,
                                  labeled_dataset_t *data, size_t *t) {
-  float pocket_LS, real_LS;
+  double pocket_LS, real_LS;
 
   for (size_t i = 0; i < data->len; i++) {
     if (((perceptron_predict(pocket, data->x + i * pocket->dim)) !=
@@ -101,7 +101,7 @@ static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket,
       pocket_LS = compute_LS(pocket, data);
       real_LS = compute_LS(p, data);
       if (real_LS > pocket_LS)
-        memcpy(p->w, pocket->w, (p->dim + 1) * sizeof(float));
+        memcpy(p->w, pocket->w, (p->dim + 1) * sizeof(double));
     }
     ++(*t);
   }
@@ -113,7 +113,7 @@ history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data,
   size_t t = 0;
 
   history_t *history;
-  float history_entry = compute_metric(p, data, metric);
+  double history_entry = compute_metric(p, data, metric);
   history = history_create(history_entry);
 
   perceptron_t *pocket;
@@ -139,7 +139,7 @@ static void adaline_weight_update(perceptron_t *p, labeled_dataset_t *data,
                                   size_t *t) {
   for (size_t i = 0; i < data->len; i++) {
     if (((perceptron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
-      float e = data->y[i];
+      double e = data->y[i];
       e -= perceptron_predict(p, data->x + i * p->dim);
       for (size_t j = 0; j < p->dim; j++)
         p->w[j] += 2 * e * data->x[i * p->dim + j];
@@ -157,7 +157,7 @@ history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data,
   size_t t = 0;
 
   history_t *history;
-  float history_entry = compute_metric(p, data, metric);
+  double history_entry = compute_metric(p, data, metric);
   history = history_create(history_entry);
 
   while (t < max_iterations) {
@@ -196,21 +196,16 @@ history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data,
 /**************/
 
 /* Returns the jth component of the gradient vector of the MSE */
-static float compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index) {
-  float grad_mse = 0.0f;
+static double compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index) {
+  double grad_mse = 0.0f;
 
-  if (index != p->dim) {
-    for (size_t i = 0; i < data->len; i++) {
-      grad_mse += data->x[data->dim * i + index] *
-                  (perceptron_predict(p, data->x + data->dim * i) -
-                   data->x[data->dim * i + p->dim]);
-    }
-  } else {
-    for (size_t i = 0; i < data->len; i++)
-      grad_mse += (perceptron_predict(p, data->x + data->dim * i) -
-                   data->x[data->dim * i + p->dim]);
+  for (size_t i = 0; i < data->len; i++) {
+    double error = (perceptron_predict(p, data->x + data->dim * i) -
+                    data->x[data->dim * i + p->dim]);
+
+    grad_mse +=
+        error * ((index != p->dim) ? data->x[data->dim * i + index] : 1.0);
   }
-
   grad_mse *= 2.0f;
   grad_mse /= data->len;
 
@@ -219,9 +214,9 @@ static float compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index) {
 
 /* One iteration of least squares method using GD */
 static void lsquares_weight_update(perceptron_t *p, dataset_t *data,
-                                   float learning_rate, size_t *t) {
+                                   double learning_rate, size_t *t) {
   /* Calculate the gradient */
-  float grad[p->dim + 1];
+  double grad[p->dim + 1];
   for (size_t j = 0; j < p->dim + 1; j++)
     grad[j] = compute_grad_MSE(p, data, j);
 
@@ -236,12 +231,12 @@ static void lsquares_weight_update(perceptron_t *p, dataset_t *data,
 /* metric parameter is there only for flexibility */
 /* just in case I want to implement other metrics */
 history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data,
-                                     metric_t metric, float learning_rate,
+                                     metric_t metric, double learning_rate,
                                      size_t max_iterations) {
   assert(metric == MSE_METRIC);
 
   history_t *history;
-  float history_entry = compute_MSE(p, data);
+  double history_entry = compute_MSE(p, data);
   history = history_create(history_entry);
   (void)metric;
   size_t t = 0;
@@ -255,7 +250,7 @@ history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data,
 }
 
 /* Predicts an input's class */
-float perceptron_predict(perceptron_t *p, float *x) {
-  float z = vec_dot(p->dim, p->w, x) + p->w[p->dim];
+double perceptron_predict(perceptron_t *p, double *x) {
+  double z = vec_dot(p->dim, p->w, x) + p->w[p->dim];
   return p->activation(z);
 }

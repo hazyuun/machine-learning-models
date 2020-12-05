@@ -3,10 +3,10 @@
 
 #include <math.h>
 
-typedef float (*activation_t)(float);
+typedef double (*activation_t)(double);
 
-float sign(float x);
-float sigmoid(float x);
-float identity(float x);
+double sign(double x);
+double sigmoid(double x);
+double identity(double x);
 
 #endif

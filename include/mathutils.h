@@ -2,10 +2,10 @@
 #define _MATHUTILS_H_
 #include <stddef.h>
 
-float vec_dot(size_t n, float *u, float *v);
+double vec_dot(size_t n, double *u, double *v);
 
-void vec_scale(size_t n, float k, float *u);
+void vec_scale(size_t n, double k, double *u);
 
-void vec_add(size_t n, float *u, const float *v);
+void vec_add(size_t n, double *u, const double *v);
 
 #endif

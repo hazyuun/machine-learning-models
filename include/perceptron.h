@@ -9,7 +9,7 @@
 typedef struct perceptron perceptron_t;
 struct perceptron {
   size_t dim;
-  float *w;
+  double *w;
   activation_t activation;
 };
 
@@ -40,9 +40,7 @@ typedef enum {
 
 } algorithm_t;
 
-/******************/
-/* Classification */
-/******************/
+/**** Classification ****/
 
 /* Trains a perceptron on a dataset using Perceptron Learning algorithm */
 history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data,
@@ -62,16 +60,15 @@ history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data,
                             algorithm_t algorithm, metric_t metric,
                             size_t max_iterations);
 
-/******************/
 
-/* Regression */
+/**** Regression ****/
 
 /* Trains a perceptron for linear regression with least squares method */
 history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data,
-                                     metric_t metric, float learning_rate,
+                                     metric_t metric, double learning_rate,
                                      size_t max_iterations);
 
 /* Predicts an input's class */
-float perceptron_predict(perceptron_t *p, float *x);
+double perceptron_predict(perceptron_t *p, double *x);
 
 #endif

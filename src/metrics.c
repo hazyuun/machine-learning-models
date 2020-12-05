@@ -1,8 +1,8 @@
 #include <metrics.h>
-#include <stdlib.h>
 #include <perceptron.h>
+#include <stdlib.h>
 
-history_t *history_create(float first) {
+history_t *history_create(double first) {
   history_t *history;
   history = (history_t *)malloc(sizeof(history_t));
   history->next = NULL;
@@ -17,7 +17,7 @@ void history_destroy(history_t *history) {
   free(history);
 }
 
-void history_append(history_t *history, float value) {
+void history_append(history_t *history, double value) {
   if (!history)
     return;
   while (history->next)
@@ -31,9 +31,9 @@ size_t history_length(history_t *history) {
   return 1 + history_length(history->next);
 }
 
-float *history_as_array(history_t *history) {
+double *history_as_array(history_t *history) {
   size_t len = history_length(history);
-  float *output = (float *)malloc(len * sizeof(float));
+  double *output = (double *)malloc(len * sizeof(double));
 
   for (size_t i = 0; i < len; i++) {
     output[i] = history->value;
@@ -43,17 +43,17 @@ float *history_as_array(history_t *history) {
 }
 
 /* Computes the percentage of the incorrect predictions */
-float compute_LS(perceptron_t *p, labeled_dataset_t *data) {
-  float LS = 0;
+double compute_LS(perceptron_t *p, labeled_dataset_t *data) {
+  double LS = 0;
   for (size_t i = 0; i < data->len; i++) {
     if (perceptron_predict(p, data->x + i * p->dim) != data->y[i])
       LS += 1;
   }
-  return LS / (float)(data->len);
+  return LS / (double)(data->len);
 }
 
-float compute_metric(perceptron_t *p, labeled_dataset_t *data,
-                     metric_t metric) {
+double compute_metric(perceptron_t *p, labeled_dataset_t *data,
+                      metric_t metric) {
   switch (metric) {
   case LOSS_METRIC:
     return compute_LS(p, data);
@@ -65,11 +65,13 @@ float compute_metric(perceptron_t *p, labeled_dataset_t *data,
 }
 
 /* Computes Mean Squared Error */
-float compute_MSE(perceptron_t *p, dataset_t *data) {
-  float mse = 0.0f;
-  for (size_t i = 0; i < data->len; i++)
-    mse += pow(perceptron_predict(p, data->x + 2 * i) - data->x[2 * i + p->dim],
-               2);
+double compute_MSE(perceptron_t *p, dataset_t *data) {
+  double mse = 0.0f;
+  for (size_t i = 0; i < data->len; i++) {
+    double error = perceptron_predict(p, data->x + data->dim * i) -
+                   data->x[data->dim * i + p->dim];
+    mse += pow(error, 2);
+  }
   mse /= data->len;
   return mse;
 }

@@ -1,7 +1,7 @@
+#include <csv.h>
+#include <perceptron.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <perceptron.h>
-#include <csv.h>
 
 int main(int argc, char **argv) {
   (void)argc;
@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
   size_t cols = csv_count_cols(csv);
   const size_t n = (rows - 1) * cols;
 
-  float x[n];
+  double x[n];
 
   for (size_t i = 1; i < rows; i++) {
     for (size_t j = 0; j < cols; j++) {
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
 /* Some tests */
 #if 0
-    float input = -10.0f;
+    double input = -10.0f;
     for(; input < 10.0f; input++)
         printf("\n %.1f : %.3f", input, perceptron_predict(p, &input));
 #endif
@@ -61,11 +61,11 @@ int main(int argc, char **argv) {
   fclose(out);
 
   /* History */
-  float *history_array = history_as_array(history);
+  double *history_array = history_as_array(history);
   size_t len = history_length(history);
   out = fopen("history.in", "w");
   for (size_t i = 0; i < len; i++) {
-    fprintf(out, "%.2lf %.2lf\n", (float)i, history_array[i]);
+    fprintf(out, "%.2lf %.2lf\n", (double)i, history_array[i]);
   }
   fclose(out);
 
