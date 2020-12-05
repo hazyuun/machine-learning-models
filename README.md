@@ -1,7 +1,8 @@
-# perceptron_algorithms
+# Machine Learning Algorithms
+Some ML algorithms for classification and regression implemented from scratch in C
 
-Some perceptron classification and regression algorithms, implemented in C
 <br />
+
 ![C/C++ CI](https://github.com/A-Rain-Lover/perceptron_algorithms/workflows/C/C++%20CI/badge.svg?branch=master)
 
 # Plots
@@ -11,7 +12,7 @@ Some perceptron classification and regression algorithms, implemented in C
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE.png" />|
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/PLA_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/pocket_loss.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/ADALINE_loss.png" />|
 ## Regression
-|Linear regression (Least squares with gradient decent)| Evolution of loss |
+|Simple linear regression (Least squares with gradient decent)| Evolution of loss |
 |----|----|
 |<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg.png" />|<img src="https://github.com/A-Rain-Lover/perceptron_algorithms/blob/master/plots/lin_reg_loss.png" />|
 
@@ -45,12 +46,12 @@ Output will be in `lib` directory
 $ make test
 ```
 Output will be in `bin` directory
-## Running the test
+## Running the tests
 
 First of all, after compiling, run the test of your choice, 
 eg.
 ```bash
-$ ./bin/noisy_input_test
+$ ./bin/rg_simple_linreg_test
 ```
 Some output files will be generated, those files are used by the gnuplot scripts to show the result 
 
@@ -62,7 +63,9 @@ For the classification tests run :
 $ ./plot.sh
 ```
 
-For the regression ones run :
+For the linear regression ones run :
 ```bash
 $ ./plot.sh --lin-reg
 ```
+### Notes about the tests
+* Test files prefixed with `cl_` are for classification, and ones prefixed with `rg_` are for regression.
