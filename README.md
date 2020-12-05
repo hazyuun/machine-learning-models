@@ -1,6 +1,6 @@
-# perceptron_algorithms
+# Machine Learning Algorithms
+Some ML algorithms for classification and regression implemented in C
 
-Some perceptron classification and regression algorithms, implemented in C
 <br />
 ![C/C++ CI](https://github.com/A-Rain-Lover/perceptron_algorithms/workflows/C/C++%20CI/badge.svg?branch=master)
 
