@@ -50,7 +50,7 @@ Output will be in `bin` directory
 First of all, after compiling, run the test of your choice, 
 eg.
 ```bash
-$ ./bin/noisy_input_test
+$ ./bin/rg_simple_linreg_test
 ```
 Some output files will be generated, those files are used by the gnuplot scripts to show the result 
 
