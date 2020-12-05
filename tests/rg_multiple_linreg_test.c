@@ -1,5 +1,7 @@
 #include <csv.h>
+#include <export.h>
 #include <perceptron.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,24 +39,10 @@ int main(int argc, char **argv) {
       perceptron_lsquares_learn(p, data, MSE_METRIC, 0.001, 2500);
 
   /* Some tests */
-#if 1
   double input[] = {1, 83, 60, 40}; // Prediction should be close to 184
   printf("\n Prediction : %lf", perceptron_predict(p, input));
-#endif
 
-  /* Generate the output files for plotting */
-  FILE *out;
-
-  /* History */
-  double *history_array = history_as_array(history);
-  size_t len = history_length(history);
-  out = fopen("history.in", "w");
-
-  for (size_t i = 0; i < len; i++) {
-    fprintf(out, "%.2lf %.2lf\n", (double)i, history_array[i]);
-  }
-
-  fclose(out);
+  gp_export_history(history, "history.in");
 
   return 0;
 }

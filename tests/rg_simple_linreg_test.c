@@ -1,5 +1,7 @@
 #include <csv.h>
+#include <export.h>
 #include <perceptron.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -36,38 +38,9 @@ int main(int argc, char **argv) {
   history_t *history =
       perceptron_lsquares_learn(p, data, MSE_METRIC, 0.01, 500);
 
-/* Some tests */
-#if 0
-    double input = -10.0f;
-    for(; input < 10.0f; input++)
-        printf("\n %.1f : %.3f", input, perceptron_predict(p, &input));
-#endif
-
-  /* Generate the output files for plotting */
-  FILE *out;
-
-  /* Points */
-  out = fopen("data.in", "w");
-  for (size_t i = 0; i < rows; i++) {
-    fprintf(out, "%.5lf %.5lf %.5lf\n", x[2 * i], x[2 * i + 1], 1.0f);
-  }
-  fclose(out);
-
-  /* Weights */
-  out = fopen("weights.in", "w");
-  for (size_t i = 0; i < 2; i++) {
-    fprintf(out, "w%ld = %.5lf\n", i, p->w[i]);
-  }
-  fclose(out);
-
-  /* History */
-  double *history_array = history_as_array(history);
-  size_t len = history_length(history);
-  out = fopen("history.in", "w");
-  for (size_t i = 0; i < len; i++) {
-    fprintf(out, "%.2lf %.2lf\n", (double)i, history_array[i]);
-  }
-  fclose(out);
+  gp_export_dataset(data, "data.in");
+  gp_export_weights(p, "weights.in");
+  gp_export_history(history, "history.in");
 
   return 0;
 }

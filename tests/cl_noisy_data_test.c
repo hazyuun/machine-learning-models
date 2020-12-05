@@ -1,7 +1,9 @@
+#include <export.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <perceptron.h>
+
 #include <csv.h>
+#include <perceptron.h>
 
 int main(int argc, char **argv) {
   (void)argc;
@@ -28,9 +30,9 @@ int main(int argc, char **argv) {
   csv_destroy(csv);
 
   /* Make a new dataset with the previous arrays */
-  labeled_dataset_t *dataset = labeled_dataset_create(2, 28);
-  dataset->x = x;
-  dataset->y = y;
+  labeled_dataset_t *data = labeled_dataset_create(2, 28);
+  data->x = x;
+  data->y = y;
 
   /* Make a new perceptron and train it with the dataset */
   perceptron_t *p = perceptron_create(2, &sign);
@@ -41,7 +43,7 @@ int main(int argc, char **argv) {
 #if 0
 	history = perceptron_train(p, dataset, POCKET_ALGO, LOSS_METRIC, 800);
 #else
-  history = perceptron_train(p, dataset, ADALINE_ALGO, LOSS_METRIC, 1000);
+  history = perceptron_train(p, data, ADALINE_ALGO, LOSS_METRIC, 1000);
 #endif
 
   /* Print the final weights */
@@ -52,31 +54,11 @@ int main(int argc, char **argv) {
 
   /* Test the perceptron */
   double in[2] = {4, 4};
-  printf("\n Predicted (4, 4) label : %f \n", (double)perceptron_predict(p, in));
+  printf("\n Predicted (4, 4) label : %f \n",
+         (double)perceptron_predict(p, in));
 
   /* Generate the output files for plotting */
-  FILE *out;
-
-  /* Points */
-  out = fopen("data.in", "w");
-  for (size_t i = 0; i < rows - 1; i++) {
-    fprintf(out, "%.5lf %.5lf %.5lf\n", x[2 * i], x[2 * i + 1], y[i]);
-  }
-  fclose(out);
-
-  /* Weights */
-  out = fopen("weights.in", "w");
-  for (size_t i = 0; i < 3; i++) {
-    fprintf(out, "w%ld = %.5lf\n", i, p->w[i]);
-  }
-  fclose(out);
-
-  /* History */
-  double *history_array = history_as_array(history);
-  size_t len = history_length(history);
-  out = fopen("history.in", "w");
-  for (size_t i = 0; i < len; i++) {
-    fprintf(out, "%.2lf %.2lf\n", (double)i, history_array[i]);
-  }
-  fclose(out);
+  gp_export_labeled_dataset(data, "data.in");
+  gp_export_weights(p, "weights.in");
+  gp_export_history(history, "history.in");
 }
