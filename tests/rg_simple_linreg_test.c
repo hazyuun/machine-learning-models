@@ -1,6 +1,6 @@
 #include <csv.h>
 #include <export.h>
-#include <perceptron.h>
+#include <neuron.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,14 +29,14 @@ int main(int argc, char **argv) {
   dataset_t *data = dataset_create(2, 12);
   data->x = x;
 
-  perceptron_t *p = perceptron_create(1, &identity);
+  neuron_t *p = neuron_create(1, &identity);
 
   /*
    * learning rate    : 0.01
    * iterations       : 500
    */
   history_t *history =
-      perceptron_lsquares_learn(p, data, MSE_METRIC, 0.01, 500);
+      neuron_lsquares_learn(p, data, MSE_METRIC, 0.01, 500);
 
   gp_export_dataset(data, "data.in");
   gp_export_weights(p, "weights.in");

@@ -7,12 +7,12 @@
 #include <activations.h>
 #include <mathutils.h>
 #include <metrics.h>
-#include <perceptron.h>
+#include <neuron.h>
 
-/* Makes a perceptron given its input dimension and its activation function */
+/* Makes a neuron given its input dimension and its activation function */
 /* and initialize its weights to random values between -1 and 1 */
-perceptron_t *perceptron_create(size_t dim, activation_t a) {
-  perceptron_t *p = (perceptron_t *)malloc(sizeof(perceptron_t));
+neuron_t *neuron_create(size_t dim, activation_t a) {
+  neuron_t *p = (neuron_t *)malloc(sizeof(neuron_t));
   p->dim = dim;
   p->w = (double *)malloc((p->dim + 1) * sizeof(double)); /* +1 for the bias */
 
@@ -24,14 +24,14 @@ perceptron_t *perceptron_create(size_t dim, activation_t a) {
   return p;
 }
 
-perceptron_t *perceptron_clone(const perceptron_t *p) {
-  perceptron_t *clone;
-  clone = perceptron_create(p->dim, p->activation);
+neuron_t *neuron_clone(const neuron_t *p) {
+  neuron_t *clone;
+  clone = neuron_create(p->dim, p->activation);
   memcpy(clone->w, p->w, (p->dim + 1) * sizeof(double));
   return clone;
 }
 
-void perceptron_destroy(perceptron_t *p) {
+void neuron_destroy(neuron_t *p) {
   free(p->w);
   free(p);
 }
@@ -49,10 +49,10 @@ void perceptron_destroy(perceptron_t *p) {
 /******************/
 
 /* One iteration of the Perceptron Learning algorithm */
-static void PLA_weight_update(perceptron_t *p, labeled_dataset_t *data,
+static void PLA_weight_update(neuron_t *p, labeled_dataset_t *data,
                               size_t *t) {
   for (size_t i = 0; i < data->len; i++) {
-    if (((perceptron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
+    if (((neuron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
       for (size_t j = 0; j < p->dim; j++)
         p->w[j] += data->y[i] * data->x[i * p->dim + j];
       p->w[p->dim] += data->y[i];
@@ -61,8 +61,8 @@ static void PLA_weight_update(perceptron_t *p, labeled_dataset_t *data,
   }
 }
 
-/* Trains a perceptron on a dataset using Perceptron Learning algorithm */
-history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data,
+/* Trains a neuron on a dataset using Perceptron Learning algorithm */
+history_t *neuron_PLA_learn(neuron_t *p, labeled_dataset_t *data,
                                 metric_t metric) {
   assert(p->activation == sign);
   size_t t = 0;
@@ -84,12 +84,12 @@ history_t *perceptron_PLA_learn(perceptron_t *p, labeled_dataset_t *data,
 }
 
 /* One iteration of Pocket algorithm */
-static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket,
+static void pocket_weight_update(neuron_t *p, neuron_t *pocket,
                                  labeled_dataset_t *data, size_t *t) {
   double pocket_LS, real_LS;
 
   for (size_t i = 0; i < data->len; i++) {
-    if (((perceptron_predict(pocket, data->x + i * pocket->dim)) !=
+    if (((neuron_predict(pocket, data->x + i * pocket->dim)) !=
          (data->y[i]))) {
 
       /* Change the weights as in the PLA */
@@ -107,7 +107,7 @@ static void pocket_weight_update(perceptron_t *p, perceptron_t *pocket,
   }
 }
 
-history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data,
+history_t *neuron_pocket_learn(neuron_t *p, labeled_dataset_t *data,
                                    metric_t metric, size_t max_iterations) {
   assert(p->activation == sign);
   size_t t = 0;
@@ -116,12 +116,12 @@ history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data,
   double history_entry = compute_metric(p, data, metric);
   history = history_create(history_entry);
 
-  perceptron_t *pocket;
-  pocket = perceptron_clone(p);
-  /* Well, this is a waste of memory, since we are cloning the entire perceptron
+  neuron_t *pocket;
+  pocket = neuron_clone(p);
+  /* Well, this is a waste of memory, since we are cloning the entire neuron
    * struct */
   /* all we need to clone is the weights, but since compute_LS needs a
-   * perceptron_t */
+   * neuron_t */
   /* and since I am feeling lazy, I just cloned it */
   /* TODO: Be less lazy */
 
@@ -130,17 +130,17 @@ history_t *perceptron_pocket_learn(perceptron_t *p, labeled_dataset_t *data,
     history_entry = compute_metric(p, data, metric);
     history_append(history, history_entry);
   }
-  perceptron_destroy(pocket);
+  neuron_destroy(pocket);
   return history;
 }
 
 /* One iteration of Adaline (Delta rule) algorithm */
-static void adaline_weight_update(perceptron_t *p, labeled_dataset_t *data,
+static void adaline_weight_update(neuron_t *p, labeled_dataset_t *data,
                                   size_t *t) {
   for (size_t i = 0; i < data->len; i++) {
-    if (((perceptron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
+    if (((neuron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
       double e = data->y[i];
-      e -= perceptron_predict(p, data->x + i * p->dim);
+      e -= neuron_predict(p, data->x + i * p->dim);
       for (size_t j = 0; j < p->dim; j++)
         p->w[j] += 2 * e * data->x[i * p->dim + j];
       p->w[p->dim] += 2 * e;
@@ -151,7 +151,7 @@ static void adaline_weight_update(perceptron_t *p, labeled_dataset_t *data,
 
 /* I noticed this is pretty much the same code in pocket function */
 /* TODO: DRY! Do not repeat yourself */
-history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data,
+history_t *neuron_adaline_learn(neuron_t *p, labeled_dataset_t *data,
                                     metric_t metric, size_t max_iterations) {
   assert(p->activation == sign);
   size_t t = 0;
@@ -169,20 +169,20 @@ history_t *perceptron_adaline_learn(perceptron_t *p, labeled_dataset_t *data,
 }
 
 /* A wrapper for all training algorithsms */
-history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data,
+history_t *neuron_train(neuron_t *p, labeled_dataset_t *data,
                             algorithm_t algorithm, metric_t metric,
                             size_t max_iterations) {
   history_t *history = NULL;
 
   switch (algorithm) {
   case PLA_ALGO:
-    history = perceptron_PLA_learn(p, data, metric);
+    history = neuron_PLA_learn(p, data, metric);
     break;
   case POCKET_ALGO:
-    history = perceptron_pocket_learn(p, data, metric, max_iterations);
+    history = neuron_pocket_learn(p, data, metric, max_iterations);
     break;
   case ADALINE_ALGO:
-    history = perceptron_adaline_learn(p, data, metric, max_iterations);
+    history = neuron_adaline_learn(p, data, metric, max_iterations);
     break;
   default: /* TODO: Print something ?*/
     break;
@@ -196,11 +196,11 @@ history_t *perceptron_train(perceptron_t *p, labeled_dataset_t *data,
 /**************/
 
 /* Returns the jth component of the gradient vector of the MSE */
-static double compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index) {
+static double compute_grad_MSE(neuron_t *p, dataset_t *data, size_t index) {
   double grad_mse = 0.0f;
 
   for (size_t i = 0; i < data->len; i++) {
-    double error = (perceptron_predict(p, data->x + data->dim * i) -
+    double error = (neuron_predict(p, data->x + data->dim * i) -
                     data->x[data->dim * i + p->dim]);
 
     grad_mse +=
@@ -213,7 +213,7 @@ static double compute_grad_MSE(perceptron_t *p, dataset_t *data, size_t index) {
 }
 
 /* One iteration of least squares method using GD */
-static void lsquares_weight_update(perceptron_t *p, dataset_t *data,
+static void lsquares_weight_update(neuron_t *p, dataset_t *data,
                                    double learning_rate, size_t *t) {
   /* Calculate the gradient */
   double grad[p->dim + 1];
@@ -230,7 +230,7 @@ static void lsquares_weight_update(perceptron_t *p, dataset_t *data,
 /* WARNING : Only works with MSE */
 /* metric parameter is there only for flexibility */
 /* just in case I want to implement other metrics */
-history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data,
+history_t *neuron_lsquares_learn(neuron_t *p, dataset_t *data,
                                      metric_t metric, double learning_rate,
                                      size_t max_iterations) {
   assert(metric == MSE_METRIC);
@@ -250,7 +250,7 @@ history_t *perceptron_lsquares_learn(perceptron_t *p, dataset_t *data,
 }
 
 /* Predicts an input's class */
-double perceptron_predict(perceptron_t *p, double *x) {
+double neuron_predict(neuron_t *p, double *x) {
   double z = vec_dot(p->dim, p->w, x) + p->w[p->dim];
   return p->activation(z);
 }

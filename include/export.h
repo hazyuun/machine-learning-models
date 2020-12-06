@@ -7,7 +7,7 @@
 typedef struct dataset dataset_t;
 typedef struct labeled_dataset labeled_dataset_t;
 typedef struct history_entry history_t;
-typedef struct perceptron perceptron_t;
+typedef struct neuron neuron_t;
 
 uint8_t gp_export_dataset(dataset_t *dataset, const char *filename);
 
@@ -16,6 +16,6 @@ uint8_t gp_export_labeled_dataset(labeled_dataset_t *dataset,
 
 uint8_t gp_export_history(history_t *history, const char *filename);
 
-uint8_t gp_export_weights(perceptron_t *perceptron, const char *filename);
+uint8_t gp_export_weights(neuron_t *neuron, const char *filename);
 
 #endif

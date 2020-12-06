@@ -1,5 +1,5 @@
 #include <metrics.h>
-#include <perceptron.h>
+#include <neuron.h>
 #include <stdlib.h>
 
 history_t *history_create(double first) {
@@ -43,16 +43,16 @@ double *history_as_array(history_t *history) {
 }
 
 /* Computes the percentage of the incorrect predictions */
-double compute_LS(perceptron_t *p, labeled_dataset_t *data) {
+double compute_LS(neuron_t *p, labeled_dataset_t *data) {
   double LS = 0;
   for (size_t i = 0; i < data->len; i++) {
-    if (perceptron_predict(p, data->x + i * p->dim) != data->y[i])
+    if (neuron_predict(p, data->x + i * p->dim) != data->y[i])
       LS += 1;
   }
   return LS / (double)(data->len);
 }
 
-double compute_metric(perceptron_t *p, labeled_dataset_t *data,
+double compute_metric(neuron_t *p, labeled_dataset_t *data,
                       metric_t metric) {
   switch (metric) {
   case LOSS_METRIC:
@@ -65,10 +65,10 @@ double compute_metric(perceptron_t *p, labeled_dataset_t *data,
 }
 
 /* Computes Mean Squared Error */
-double compute_MSE(perceptron_t *p, dataset_t *data) {
+double compute_MSE(neuron_t *p, dataset_t *data) {
   double mse = 0.0f;
   for (size_t i = 0; i < data->len; i++) {
-    double error = perceptron_predict(p, data->x + data->dim * i) -
+    double error = neuron_predict(p, data->x + data->dim * i) -
                    data->x[data->dim * i + p->dim];
     mse += pow(error, 2);
   }

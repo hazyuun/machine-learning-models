@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include <csv.h>
-#include <perceptron.h>
+#include <neuron.h>
 
 int main(int argc, char **argv) {
   (void)argc;
@@ -34,16 +34,16 @@ int main(int argc, char **argv) {
   data->x = x;
   data->y = y;
 
-  /* Make a new perceptron and train it with the dataset */
-  perceptron_t *p = perceptron_create(2, &sign);
+  /* Make a new neuron and train it with the dataset */
+  neuron_t *p = neuron_create(2, &sign);
 
   history_t *history;
 
 /* You can switch between pocket and adaline here */
 #if 0
-	history = perceptron_train(p, dataset, POCKET_ALGO, LOSS_METRIC, 800);
+	history = neuron_train(p, dataset, POCKET_ALGO, LOSS_METRIC, 800);
 #else
-  history = perceptron_train(p, data, ADALINE_ALGO, LOSS_METRIC, 1000);
+  history = neuron_train(p, data, ADALINE_ALGO, LOSS_METRIC, 1000);
 #endif
 
   /* Print the final weights */
@@ -52,10 +52,10 @@ int main(int argc, char **argv) {
     printf("\t%.5f", (double)(p->w[j]));
   printf("\n");
 
-  /* Test the perceptron */
+  /* Test the neuron */
   double in[2] = {4, 4};
   printf("\n Predicted (4, 4) label : %f \n",
-         (double)perceptron_predict(p, in));
+         (double)neuron_predict(p, in));
 
   /* Generate the output files for plotting */
   gp_export_labeled_dataset(data, "data.in");

@@ -1,6 +1,6 @@
 #include <csv.h>
 #include <export.h>
-#include <perceptron.h>
+#include <neuron.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,9 +34,9 @@ int main(int argc, char **argv) {
   data->x = x;
   data->y = y;
 
-  /* Make a new perceptron and train it with the dataset */
-  perceptron_t *p = perceptron_create(2, &sign);
-  history_t *history = perceptron_train(p, data, PLA_ALGO, LOSS_METRIC, 1);
+  /* Make a new neuron and train it with the dataset */
+  neuron_t *p = neuron_create(2, &sign);
+  history_t *history = neuron_train(p, data, PLA_ALGO, LOSS_METRIC, 1);
 
   /* Print the final weights */
   printf("\n Final weights :");
@@ -44,10 +44,10 @@ int main(int argc, char **argv) {
     printf("\t%.1f", (double)(p->w[j]));
   printf("\n");
 
-  /* Test the perceptron */
+  /* Test the neuron */
   double in[2] = {4, 4};
   printf("\n Predicted (4, 4) label : %f \n",
-         (double)perceptron_predict(p, in));
+         (double)neuron_predict(p, in));
 
   /* Generate the output files for plotting */
   gp_export_labeled_dataset(data, "data.in");
