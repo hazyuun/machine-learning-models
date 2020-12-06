@@ -1,3 +1,4 @@
+#include <mathutils.h>
 #include <metrics.h>
 #include <neuron.h>
 #include <stdlib.h>
@@ -52,8 +53,7 @@ double compute_LS(neuron_t *p, labeled_dataset_t *data) {
   return LS / (double)(data->len);
 }
 
-double compute_metric(neuron_t *p, labeled_dataset_t *data,
-                      metric_t metric) {
+double compute_metric(neuron_t *p, labeled_dataset_t *data, metric_t metric) {
   switch (metric) {
   case LOSS_METRIC:
     return compute_LS(p, data);
@@ -74,4 +74,46 @@ double compute_MSE(neuron_t *p, dataset_t *data) {
   }
   mse /= data->len;
   return mse;
+}
+
+/* Returns the jth component of the gradient vector of the MSE */
+double compute_grad_MSE(neuron_t *p, dataset_t *data, size_t index) {
+  double grad_mse = 0.0f;
+
+  for (size_t i = 0; i < data->len; i++) {
+    double error = (neuron_predict(p, data->x + data->dim * i) -
+                    data->x[data->dim * i + p->dim]);
+
+    grad_mse +=
+        error * ((index != p->dim) ? data->x[data->dim * i + index] : 1.0);
+  }
+  grad_mse *= 2.0f;
+  grad_mse /= data->len;
+
+  return grad_mse;
+}
+
+double compute_binary_cross_entropy_loss(neuron_t *p, labeled_dataset_t *data) {
+  double loss = 0.0f;
+  for (size_t i = 0; i < data->len; i++) {
+    loss +=
+        (1 - data->y[i]) * log(1 - neuron_predict(p, data->x + data->dim * i));
+    loss += (data->y[i]) * log(neuron_predict(p, data->x + data->dim * i));
+  }
+  loss /= data->len;
+  return loss;
+}
+
+double compute_grad_binary_cross_entropy_loss(neuron_t *p,
+                                              labeled_dataset_t *data,
+                                              size_t index) {
+  double grad = 0.0f;
+
+  for (size_t i = 0; i < data->len; i++) {
+    double xij = (index != data->dim) ? data->x[data->dim * i + index] : 1.0;
+    grad += xij * ((neuron_predict(p, data->x + data->dim * i)) - data->y[i]);
+  }
+  grad /= data->len;
+
+  return grad;
 }

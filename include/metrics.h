@@ -34,6 +34,12 @@ double *history_as_array(history_t *history);
 double compute_LS(neuron_t *p, labeled_dataset_t *data);
 /* Computes Mean Squared Error */
 double compute_MSE(neuron_t *p, dataset_t *data);
-double compute_metric(neuron_t *p, labeled_dataset_t *data,
-                      metric_t metric);
+double compute_grad_MSE(neuron_t *p, dataset_t *data, size_t index);
+
+double compute_binary_cross_entropy_loss(neuron_t *p, labeled_dataset_t *data);
+double compute_grad_binary_cross_entropy_loss(neuron_t *p,
+                                              labeled_dataset_t *data,
+                                              size_t index);
+
+double compute_metric(neuron_t *p, labeled_dataset_t *data, metric_t metric);
 #endif

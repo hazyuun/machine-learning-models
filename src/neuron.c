@@ -49,8 +49,7 @@ void neuron_destroy(neuron_t *p) {
 /******************/
 
 /* One iteration of the Perceptron Learning algorithm */
-static void PLA_weight_update(neuron_t *p, labeled_dataset_t *data,
-                              size_t *t) {
+static void PLA_weight_update(neuron_t *p, labeled_dataset_t *data, size_t *t) {
   for (size_t i = 0; i < data->len; i++) {
     if (((neuron_predict(p, data->x + i * p->dim)) != (data->y[i]))) {
       for (size_t j = 0; j < p->dim; j++)
@@ -63,7 +62,7 @@ static void PLA_weight_update(neuron_t *p, labeled_dataset_t *data,
 
 /* Trains a neuron on a dataset using Perceptron Learning algorithm */
 history_t *neuron_PLA_learn(neuron_t *p, labeled_dataset_t *data,
-                                metric_t metric) {
+                            metric_t metric) {
   assert(p->activation == sign);
   size_t t = 0;
   history_t *history;
@@ -89,8 +88,7 @@ static void pocket_weight_update(neuron_t *p, neuron_t *pocket,
   double pocket_LS, real_LS;
 
   for (size_t i = 0; i < data->len; i++) {
-    if (((neuron_predict(pocket, data->x + i * pocket->dim)) !=
-         (data->y[i]))) {
+    if (((neuron_predict(pocket, data->x + i * pocket->dim)) != (data->y[i]))) {
 
       /* Change the weights as in the PLA */
       for (size_t j = 0; j < pocket->dim; j++)
@@ -108,7 +106,7 @@ static void pocket_weight_update(neuron_t *p, neuron_t *pocket,
 }
 
 history_t *neuron_pocket_learn(neuron_t *p, labeled_dataset_t *data,
-                                   metric_t metric, size_t max_iterations) {
+                               metric_t metric, size_t max_iterations) {
   assert(p->activation == sign);
   size_t t = 0;
 
@@ -152,7 +150,7 @@ static void adaline_weight_update(neuron_t *p, labeled_dataset_t *data,
 /* I noticed this is pretty much the same code in pocket function */
 /* TODO: DRY! Do not repeat yourself */
 history_t *neuron_adaline_learn(neuron_t *p, labeled_dataset_t *data,
-                                    metric_t metric, size_t max_iterations) {
+                                metric_t metric, size_t max_iterations) {
   assert(p->activation == sign);
   size_t t = 0;
 
@@ -170,8 +168,8 @@ history_t *neuron_adaline_learn(neuron_t *p, labeled_dataset_t *data,
 
 /* A wrapper for all training algorithsms */
 history_t *neuron_train(neuron_t *p, labeled_dataset_t *data,
-                            algorithm_t algorithm, metric_t metric,
-                            size_t max_iterations) {
+                        algorithm_t algorithm, metric_t metric,
+                        size_t max_iterations) {
   history_t *history = NULL;
 
   switch (algorithm) {
@@ -195,23 +193,6 @@ history_t *neuron_train(neuron_t *p, labeled_dataset_t *data,
 /* REGRESSION */
 /**************/
 
-/* Returns the jth component of the gradient vector of the MSE */
-static double compute_grad_MSE(neuron_t *p, dataset_t *data, size_t index) {
-  double grad_mse = 0.0f;
-
-  for (size_t i = 0; i < data->len; i++) {
-    double error = (neuron_predict(p, data->x + data->dim * i) -
-                    data->x[data->dim * i + p->dim]);
-
-    grad_mse +=
-        error * ((index != p->dim) ? data->x[data->dim * i + index] : 1.0);
-  }
-  grad_mse *= 2.0f;
-  grad_mse /= data->len;
-
-  return grad_mse;
-}
-
 /* One iteration of least squares method using GD */
 static void lsquares_weight_update(neuron_t *p, dataset_t *data,
                                    double learning_rate, size_t *t) {
@@ -230,9 +211,8 @@ static void lsquares_weight_update(neuron_t *p, dataset_t *data,
 /* WARNING : Only works with MSE */
 /* metric parameter is there only for flexibility */
 /* just in case I want to implement other metrics */
-history_t *neuron_lsquares_learn(neuron_t *p, dataset_t *data,
-                                     metric_t metric, double learning_rate,
-                                     size_t max_iterations) {
+history_t *neuron_lsquares_learn(neuron_t *p, dataset_t *data, metric_t metric,
+                                 double learning_rate, size_t max_iterations) {
   assert(metric == MSE_METRIC);
 
   history_t *history;
