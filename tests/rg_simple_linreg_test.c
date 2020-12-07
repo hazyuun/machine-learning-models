@@ -1,46 +1,22 @@
-#include <csv.h>
-#include <export.h>
-#include <neuron.h>
-
-#include <stdio.h>
-#include <stdlib.h>
+#include <helpers/model.h>
+#include <helpers/csv2dataset.h>
+#include <utils/export.h>
 
 int main(int argc, char **argv) {
   (void)argc;
   (void)argv;
 
-  csv_t csv = csv_load("./test-data/regression.csv");
+  /* Load data */
+  dataset_t *data = csv_to_dataset("./test-data/regression.csv");
+  
+  /* Make and train the model */
+  single_layer_model_t *model;
+  model = make_single_layer_model(LIN_REG_MODEL, 1, &identity);
+  history_t *history = model->train(model, data);
 
-  /* -1 because the first row is only for the headers */
-  size_t rows = csv_count_rows(csv);
-  size_t cols = csv_count_cols(csv);
-  const size_t n = (rows - 1) * cols;
-
-  double x[n];
-
-  for (size_t i = 1; i < rows; i++) {
-    for (size_t j = 0; j < cols; j++) {
-      x[cols * (i - 1) + j] = atof(csv_get_value(csv, i, j));
-    }
-  }
-
-  csv_destroy(csv);
-
-  dataset_t *data = dataset_create(2, 12);
-  data->x = x;
-
-  neuron_t *p = neuron_create(1, &identity);
-
-  /*
-   * learning rate    : 0.01
-   * iterations       : 500
-   */
-  history_t *history =
-      neuron_lsquares_learn(p, data, MSE_METRIC, 0.01, 500);
-
+  /* Generate the output files for plotting */
   gp_export_dataset(data, "data.in");
-  gp_export_weights(p, "weights.in");
-  gp_export_history(history, "history.in");
+  gp_export_single_layer_model(model, history);
 
   return 0;
 }

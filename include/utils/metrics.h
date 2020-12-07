@@ -14,7 +14,12 @@ struct history_entry {
   struct history_entry *next;
 };
 
-typedef enum { LOSS_METRIC, ACCURACY_METRIC, MSE_METRIC } metric_t;
+typedef enum {
+  LOSS_METRIC,
+  ACCURACY_METRIC,
+  MSE_METRIC,
+  BIN_CROSS_ENTROPY_METRIC
+} metric_t;
 
 /* Self explanatory stuff ahead */
 

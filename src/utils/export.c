@@ -1,7 +1,7 @@
 #include <dataset.h>
 #include <export.h>
 #include <metrics.h>
-#include <neuron.h>
+#include <helpers/model.h>
 #include <stdio.h>
 
 uint8_t gp_export_dataset(dataset_t *dataset, const char *filename) {
@@ -62,4 +62,12 @@ uint8_t gp_export_weights(neuron_t *neuron, const char *filename) {
   }
   fclose(out);
   return 0;
+}
+
+
+uint8_t gp_export_single_layer_model(single_layer_model_t *model,
+                                     history_t *history) {
+
+  return gp_export_weights(model->neuron, "weights.in") |
+         gp_export_history(history, "history.in");
 }

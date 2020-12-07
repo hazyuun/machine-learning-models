@@ -1,6 +1,6 @@
 #include <mathutils.h>
 #include <metrics.h>
-#include <neuron.h>
+#include <models/single_layer/neuron.h>
 #include <stdlib.h>
 
 history_t *history_create(double first) {

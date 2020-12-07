@@ -1,6 +1,6 @@
-#include <logistic_regression.h>
+#include <models/single_layer/logistic_regression/logistic_regression.h>
 
-void log_reg_weight_update(neuron_t *p, labeled_dataset_t *data,
+static void log_reg_weight_update(neuron_t *p, labeled_dataset_t *data,
                            double learning_rate, size_t *t) {
   /* Calculate the gradient */
   double grad[p->dim + 1];
