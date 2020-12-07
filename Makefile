@@ -1,5 +1,6 @@
 CC = gcc
 CCFLAGS = -g -O2 -Werror -Wall -Wextra -Wshadow
+INCLUDE = -Iinclude -Iinclude/utils -Irainy-csv/src
 
 LIB_TARGET = perceptron.a
 TST_TARGET = perceptron_test
@@ -12,7 +13,7 @@ all: lib tests
 
 .phony: dirs
 dirs:
-	@mkdir -p obj lib bin
+	@mkdir -p $(dir $(OBJ)) bin
 	
 .phony: lib
 lib: dirs $(OBJ)
@@ -24,13 +25,13 @@ lib: dirs $(OBJ)
 
 obj/%.o: src/%.c
 	@echo [CC] $@
-	@$(CC) -c $< -o $@ $(CCFLAGS) -Iinclude 
+	@$(CC) -c $< -o $@ $(CCFLAGS) $(INCLUDE) -D USE_RAINY_CSV
 
 
 TESTSRC = $(shell find ./tests -name "*.c")
 TESTEXE = $(patsubst ./tests/%.c, ./bin/%, $(TESTSRC))
 CSVSRC = rainy-csv/src/csv.c
-TESTINC = -Iinclude -Irainy-csv/src
+TESTINC = -Iinclude -Irainy-csv/src -Iinclude/utils
 
 .phony: tests
 tests: dirs $(TESTEXE)

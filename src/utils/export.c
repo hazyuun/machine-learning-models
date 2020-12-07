@@ -1,7 +1,7 @@
 #include <dataset.h>
 #include <export.h>
 #include <metrics.h>
-#include <perceptron.h>
+#include <helpers/model.h>
 #include <stdio.h>
 
 uint8_t gp_export_dataset(dataset_t *dataset, const char *filename) {
@@ -51,15 +51,23 @@ uint8_t gp_export_history(history_t *history, const char *filename) {
   return 0;
 }
 
-uint8_t gp_export_weights(perceptron_t *perceptron, const char *filename) {
+uint8_t gp_export_weights(neuron_t *neuron, const char *filename) {
   FILE *out = fopen(filename, "w");
 
   if (!out)
     return 1;
 
-  for (size_t i = 0; i < perceptron->dim + 1; i++) {
-    fprintf(out, "w%ld = %.5lf\n", i, perceptron->w[i]);
+  for (size_t i = 0; i < neuron->dim + 1; i++) {
+    fprintf(out, "w%ld = %.5lf\n", i, neuron->w[i]);
   }
   fclose(out);
   return 0;
+}
+
+
+uint8_t gp_export_single_layer_model(single_layer_model_t *model,
+                                     history_t *history) {
+
+  return gp_export_weights(model->neuron, "weights.in") |
+         gp_export_history(history, "history.in");
 }
