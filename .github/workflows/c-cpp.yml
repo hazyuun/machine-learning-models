@@ -18,5 +18,5 @@ jobs:
           git submodule sync --recursive
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1;
     - name: make
-      run: make all
+      run: make USE_RAINY_CSV=1 all
 
