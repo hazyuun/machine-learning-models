@@ -34,12 +34,17 @@ $ git clone https://github.com/A-Rain-Lover/machine-learning-models
 Just use the Makefile
 ### Compile everthing
 ```bash
-$ make all
+$ make USE_RAINY_CSV=1 all
 ```
-Output will be in `lib` for the library, and in `bin` for the tests
+Output will be in `lib` for the library, and in `bin` for the tests, note that `USE_RAINY_CSV` macro needs to be defined to compile the tests.
 ### Only compile the library
+if you want to compile the library without `rainy-csv` support, run :
 ```bash
 $ make lib
+```
+otherwise, run
+```bash
+$ make USE_RAINY_CSV=1 lib
 ```
 Output will be in `lib` directory
 ### Compile the test (supposing you already compiled the library
@@ -47,7 +52,6 @@ Output will be in `lib` directory
 $ make test
 ```
 Output will be in `bin` directory
-
 ## Usage example
 ```C
 #include <helpers/model.h>
