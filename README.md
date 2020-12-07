@@ -1,6 +1,5 @@
-# Machine Learning Algorithms
-Some ML algorithms for classification and regression implemented from scratch in C
-
+# Machine Learning Models
+Some ML models for classification and regression implemented from scratch in C.
 <br />
 
 ![C/C++ CI](https://github.com/A-Rain-Lover/perceptron_algorithms/workflows/C/C++%20CI/badge.svg?branch=master)
@@ -48,6 +47,32 @@ Output will be in `lib` directory
 $ make test
 ```
 Output will be in `bin` directory
+
+## Usage example
+```C
+#include <helpers/model.h>
+#include <helpers/csv2dataset.h>
+#include <utils/export.h>
+
+int main(int argc, char **argv) {
+  (void)argc;
+  (void)argv;
+
+   /* Load data */
+  labeled_dataset_t *data;
+  data = csv_to_labeled_dataset("./test-data/noisy01.csv");
+
+  /* Make and train the model */
+  single_layer_model_t *model;
+  model = make_single_layer_model(LOG_REG_MODEL, 2, &sigmoid);
+  history_t *history = model->train(model, data);
+
+  /* Generate the output files for plotting */
+  gp_export_labeled_dataset(data, "data.in");
+  gp_export_single_layer_model(model, history);
+}
+```
+
 ## Running the tests
 
 First of all, after compiling, run the test of your choice, 
