@@ -2,8 +2,13 @@ CC = gcc
 CCFLAGS = -g -O2 -Werror -Wall -Wextra -Wshadow
 INCLUDE = -Iinclude -Iinclude/utils -Irainy-csv/src
 
-LIB_TARGET = perceptron.a
-TST_TARGET = perceptron_test
+ifdef USE_RAINY_CSV
+DEFINES = -D USE_RAINY_CSV
+else
+DEFINES = 
+endif
+
+LIB_TARGET = ml.a
 
 SRC = $(shell find ./src -name "*.c")
 OBJ = $(patsubst ./src/%.c, ./obj/%.o, $(SRC))
@@ -25,7 +30,7 @@ lib: dirs $(OBJ)
 
 obj/%.o: src/%.c
 	@echo [CC] $@
-	@$(CC) -c $< -o $@ $(CCFLAGS) $(INCLUDE) -D USE_RAINY_CSV
+	@$(CC) -c $< -o $@ $(CCFLAGS) $(INCLUDE) $(DEFINES)
 
 
 TESTSRC = $(shell find ./tests -name "*.c")
