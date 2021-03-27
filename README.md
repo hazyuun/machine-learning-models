@@ -2,18 +2,18 @@
 Some ML models for classification and regression implemented from scratch in C.
 <br />
 
-![C/C++ CI](https://github.com/A-Rain-Lover/machine-learning-models/workflows/C/C++%20CI/badge.svg?branch=master)
+![C/C++ CI](https://github.com/computer-spectre/machine-learning-models/workflows/C/C++%20CI/badge.svg?branch=master)
 
 # Plots
 ## Classification
 |PLA|POCKET|ADALINE|
 |----|----|----|
-|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/PLA.png" />|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/pocket.png" />|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/ADALINE.png" />|
-|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/PLA_loss.png" />|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/pocket_loss.png" />|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/ADALINE_loss.png" />|
+|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/PLA.png" />|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/pocket.png" />|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/ADALINE.png" />|
+|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/PLA_loss.png" />|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/pocket_loss.png" />|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/ADALINE_loss.png" />|
 ## Regression
 |Simple linear regression (Least squares with gradient decent)| Evolution of loss |
 |----|----|
-|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/lin_reg.png" />|<img src="https://github.com/A-Rain-Lover/machine-learning-models/blob/master/plots/lin_reg_loss.png" />|
+|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/lin_reg.png" />|<img src="https://github.com/computer-spectre/machine-learning-models/blob/master/plots/lin_reg_loss.png" />|
 
 # Getting started
 ## Dependencies (Optionnal)
@@ -22,12 +22,12 @@ Some ML models for classification and regression implemented from scratch in C.
 ## Cloning
 If you are planning to run the tests, please clone with
 ```bash
-$ git clone --recurse-submodules https://github.com/A-Rain-Lover/machine-learning-models
+$ git clone --recurse-submodules https://github.com/computer-spectre/machine-learning-models
 ```
 to automatically get `rainy-csv`. <br />
 If you won't run the tests, then clone as usual :
 ```bash
-$ git clone https://github.com/A-Rain-Lover/machine-learning-models
+$ git clone https://github.com/computer-spectre/machine-learning-models
 ```
 # Compiling and using
 ## Compiling
